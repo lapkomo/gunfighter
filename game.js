@@ -16,7 +16,8 @@ window.onload = function()
 	game.onload = function(){
         // タイム
         var time_label = new Label();
-        time_label.x = time_label.y = 2;
+        time_label.x = 2;
+        time_label.y = 2;
         time_label.addEventListener(enchant.Event.ENTER_FRAME, function(){
             var count = Math.floor(game.frame/game.fps);
             time = LIMIT_TIME - count;
@@ -34,7 +35,8 @@ window.onload = function()
 		for(var i=0;i<8;i++){
 			var enemy = new Sprite(32,32);
 			enemy.image = game.assets['http://enchantjs.com/assets/images/chara2.gif'];
-			enemy.moveTo =(150,150);
+			enemy.x = Math.random()*(320-32);
+			enemy.y = Math.random()*(320-32);
 			game.rootScene.addChild(enemy);
 		};
 		
@@ -43,11 +45,6 @@ window.onload = function()
 			game.rootScene.removeChild(enemy);
 		});
 		
-		//敵をタッチし終わった時の処理
-		enemy.addEventListener("touchend",function(){
-			enemy.moveTo = Math.floor(Math.random()*(320-32), Math.random()*(320-32));
-			game.rootScene.addChild(enemy);
-		});
 	};
 	
 	//ゲーム開始
