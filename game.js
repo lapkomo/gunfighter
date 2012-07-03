@@ -1,7 +1,24 @@
-enchant();
-
 // リミット
 var LIMIT_TIME = 30;
+
+enchant();
+
+
+// ここで自作クラスBearをつくる
+Enemy = Class.create(Sprite, // Spriteクラスを継承
+                    { initialize:function(x,y){ //初期化する
+                        Sprite.call(this,32,32); //Spriteオブジェクトを初期化
+                        this.image = game.assets['http://enchantjs.com/assets/images/chara2.gif'];
+                        this.x = x;
+                        this.y = y;
+                        this.frame=0;
+                        game.rootScene.addChild(this);
+                      },
+                      //enterframeイベントのリスナーを定義する
+                      onenterframe:function(){
+                        this.x++; //右へ移動
+                      }
+                    });
 
 window.onload = function()
 {
@@ -31,19 +48,10 @@ window.onload = function()
 		game.rootScene.backgroundColor = '#F4A460';
 
 	
-		//敵の生成
-		for(var i=0;i<8;i++){
-			var enemy = new Sprite(32,32);
-			enemy.image = game.assets['http://enchantjs.com/assets/images/chara2.gif'];
-			enemy.x = Math.random()*(320-32);
-			enemy.y = Math.random()*(320-32);
-			game.rootScene.addChild(enemy);
-		};
-		
-		//敵をタッチした時の処理
-		enemy.addEventListener("touchstart",function(){
-			game.rootScene.removeChild(enemy);
-		});
+		for (var i = 0; i < 5; i++) {
+            enemyi = new Enemy(Math.random() * 320 - 32, Math.random() * 320 - 32); 
+        }
+
 		
 	};
 	
