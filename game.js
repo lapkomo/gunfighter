@@ -8,7 +8,7 @@ enchant();
 Enemy = Class.create(Sprite, // Spriteクラスを継承
                     { initialize:function(x,y){ //初期化する
                         Sprite.call(this,32,32); //Spriteオブジェクトを初期化
-                        this.image = game.assets['http://enchantjs.com/assets/images/chara2.gif'];
+                        this.image = game.assets['chara2.gif'];
                         this.x = x;
                         this.y = y;
                         this.frame=0;
@@ -27,7 +27,7 @@ window.onload = function()
     game.fps = 16;
    
 	//画像の読み込み
-	game.preload('http://enchantjs.com/assets/images/chara2.gif');
+	game.preload('chara2.gif');
 
 	//ロード開始時に呼ばれる
 	game.onload = function(){
