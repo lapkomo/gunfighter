@@ -19,11 +19,22 @@ var game;
                       onenterframe:function(){
                       	this.tick++;
                       	this.frame = this.anim [this.tick % 4];
-                      	this.x++;
-                        this.scale(1.008,1.008); //少しづつ拡大
-                        if(this.x == 320-32){
-                        	this.scalex *= -1;
+                      	this.x += 3;
+                      	if(this.y >= 160){
+                        	this.scale(1.008,1.008); //少しづつ拡大
+                        }else{
+                        	this.scale(1.005,1.005);
                         }
+                        
+                        //xが320以上になったら跳ね返りする
+                        if(this.x >= 320){
+                        	this.x *= -1;
+                        }
+                        
+                        //scaleXが7以上になったらスプライトをremove
+                      	if(this.scaleX >= 7.5){
+                      		game.rootScene.removeChild(this);
+                      	}
                         
                       },
                      ontouchend: function(){
@@ -52,10 +63,7 @@ window.onload = function(){
         });
         game.rootScene.addChild(time_label);
       
-      
-      
-
-       
+   
 		//背景色の生成
 		game.rootScene.backgroundColor = '#F4A460';
 
