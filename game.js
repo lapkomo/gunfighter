@@ -2,6 +2,7 @@ enchant();
 // リミット
 var LIMIT_TIME = 30;
 var game;
+var addsocre = 10;
 
 		// ここで自作クラスEnemyをつくる
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
@@ -46,6 +47,7 @@ var game;
                       },
                      ontouchend: function(){
                       	game.rootScene.removeChild(this);
+                        game.score = game.score + addscore;
                       }
                     });
                     
@@ -54,6 +56,7 @@ window.onload = function(){
     // ゲームクラスを生成
     game = new Game(320, 320);
     game.fps = 16;
+    game.score = 0;
 	//画像の読み込み
 	game.preload('chara1.gif');
 	//ロード開始時に呼ばれる
@@ -65,11 +68,18 @@ window.onload = function(){
         time_label.addEventListener(enchant.Event.ENTER_FRAME, function(){
             var count = Math.floor(game.frame/game.fps);
             time = LIMIT_TIME - count;
-            this.text = "タイムリミット : " + time;
+            time_label.text = "タイムリミット : " + time;
             if (time <= 0) { game.end(time, 'GameOver'); }
         });
         game.rootScene.addChild(time_label);
-      
+   
+      //スコア
+        var score_label = new Label();
+        score_label.x = 2;
+        score_label.y = 12;
+        score_label.text = "スコア：" + game.score;
+        game.rootScene.addChild(score_label);
+   
    
 		//背景色の生成
 		game.rootScene.backgroundColor = '#F4A460';
