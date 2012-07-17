@@ -10,6 +10,8 @@ var game;
                         this.image = game.assets['chara1.gif'];
                         this.x = x;
                         this.y = y;
+                        this.dx = 3;
+                        this.dy = 3;
                         this.frame = 0;
                         this.tick = 0;
                         this.anim  = [0, 1, 0, 2];
@@ -19,17 +21,22 @@ var game;
                       onenterframe:function(){
                       	this.tick++;
                       	this.frame = this.anim [this.tick % 4];
-                      	this.x += 3;
+                      	this.x = this.x + this.dx;
                       	if(this.y >= 160){
                         	this.scale(1.008,1.008); //少しづつ拡大
                         }else{
                         	this.scale(1.005,1.005);
                         }
                         
-                        //xが320以上になったら跳ね返りする
-                        if(this.x >= 320){
-                        	this.x *= -1;
+                        //xが320-32以上になったら跳ね返りする
+                        if(this.x >= 320-32){
+                        	this.dx *= -1;
                         }
+                        //xが0になったら跳ね返りする
+                        if(this.x <= 0){
+                        	this.dx *= -1;
+                        }
+                        
                         
                         //scaleXが7以上になったらスプライトをremove
                       	if(this.scaleX >= 7.5){
