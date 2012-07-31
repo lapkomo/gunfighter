@@ -8,7 +8,7 @@ var addsocre = 10;
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
                     { initialize:function(x,y){ //初期化する
                         Sprite.call(this,32,32); //Spriteオブジェクトを初期化
-                        this.image = game.assets['gunfighter.gif'];
+                        this.image = game.assets['gunfighter.png'];
                         this.x = x;
                         this.y = y;
                         this.dx = 3;
@@ -58,9 +58,22 @@ window.onload = function(){
     game.fps = 16;
     game.score = 0;
 	//画像の読み込み
-	game.preload('gunfighter.gif');
+	game.preload('gunfighter.png','wilderness.gif','crag.gif','cactus.gif','fcactus.gif','rock.gif','bullet.gif');
 	//ロード開始時に呼ばれる
 	game.onload = function(){
+	
+	
+			//背景画像の生成
+		var bg = new Sprite(320,320);
+		bg.image = game.assets['wilderness.gif'];
+		game.rootScene.addChild(bg);
+		
+	
+		//enemyを複数表示させる
+		for (var i = 0; i < 5; i++) {
+            enemyi = new Enemy(Math.random() * 320 - 32, Math.random() * 320 - 32); 
+        }
+	
       // タイム
         var time_label = new Label();
         time_label.x = 2;
@@ -81,13 +94,35 @@ window.onload = function(){
         game.rootScene.addChild(score_label);
    
    
-		//背景色の生成
-		game.rootScene.backgroundColor = '#F4A460';
 
-	//enemyを複数表示させる
-		for (var i = 0; i < 5; i++) {
-            enemyi = new Enemy(Math.random() * 320 - 32, Math.random() * 320 - 32); 
-        }
+		
+		//障害物を表示
+		var barrier1 = new Sprite(64,64);
+		barrier1.image = game.assets['crag.gif'];
+		barrier1.x = 200;
+		barrier1.y = 100;
+		game.rootScene.addChild(barrier1);
+		
+		var barrier2 = new Sprite(64,64);
+		barrier2.image = game.assets['rock.gif'];
+		barrier2.x = 100;
+		barrier2.y = 150;
+		game.rootScene.addChild(barrier2);
+		
+		var barrier3 = new Sprite(64,64);
+		barrier3.image = game.assets['cactus.gif'];
+		barrier3.x = 100;
+		barrier3.y = 200;
+		game.rootScene.addChild(barrier3);
+		
+		var barrier4 = new Sprite(64,64);
+		barrier4.image = game.assets['fcactus.gif'];
+		barrier4.x = 80;
+		barrier4.y = 80;
+		game.rootScene.addChild(barrier4);
+	
+
+
 		
 	};
 	//ゲーム開始
