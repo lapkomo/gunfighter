@@ -8,7 +8,7 @@ var addsocre = 10;
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
                     { initialize:function(x,y){ //初期化する
                         Sprite.call(this,32,32); //Spriteオブジェクトを初期化
-                        this.image = game.assets['chara1.gif'];
+                        this.image = game.assets['gunfighter.gif'];
                         this.x = x;
                         this.y = y;
                         this.dx = 3;
@@ -21,7 +21,7 @@ var addsocre = 10;
                       //enterframeイベントのリスナーを定義する
                       onenterframe:function(){
                       	this.tick++;
-                      	this.frame = this.anim [this.tick % 4];
+                      //	this.frame = this.anim [this.tick % 4];
                       	this.x = this.x + this.dx;
                       	if(this.y >= 160){
                         	this.scale(1.008,1.008); //少しづつ拡大
@@ -58,7 +58,7 @@ window.onload = function(){
     game.fps = 16;
     game.score = 0;
 	//画像の読み込み
-	game.preload('chara1.gif');
+	game.preload('gunfighter.gif');
 	//ロード開始時に呼ばれる
 	game.onload = function(){
       // タイム
