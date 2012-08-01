@@ -3,6 +3,13 @@ enchant();
 var LIMIT_TIME = 30;
 var game;
 var addscore = 10;
+var time = 0;
+
+var MOVE_STATE = 0;
+var AIM_STATE = 1;
+var SHOT_STATE = 2;
+var EVACUATE_STATE = 3;
+
 
 		// ここで自作クラスEnemyをつくる
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
@@ -11,39 +18,53 @@ var addscore = 10;
                         this.image = game.assets['gunfighter.png'];
                         this.x = x;
                         this.y = y;
-                        this.dx = 3;
-                        this.dy = 3;
+                        this.dx = 5;
+                        this.dy = 5;
                         this.frame = 0;
                         this.tick = 0;
-                        // this.anim  = [0, 1, 0, 2];
+                        this.anim  = [0, 1];
+                        this.state = "move";
+                        this.keepstatecount = 32 + Math.floor(Math.random(32));
+                        this._element.style.zIndex = this.height + y;
                         game.rootScene.addChild(this);
                       },
                       //enterframeイベントのリスナーを定義する
                       onenterframe:function(){
-                      	this.tick++;
-                      //	this.frame = this.anim [this.tick % 4];
-                      	this.x = this.x + this.dx;
-                      	if(this.y >= 160){
-                        	this.scale(1.008,1.008); //少しづつ拡大
-                        }else{
-                        	this.scale(1.005,1.005);
+                      
+                      this.keepstatecount--;
+                      
+                      if(this.state ==MOVE_STATE){
+                      		this.tick++;
+                      		this.frame = this.anim [this.tick % 3];
+                      		if(this.tick % 1 == 0){
+                      			this.x = this.x + this.dx;
+                      		}
+                        	//xが320-32以上になったら跳ね返りする
+                        	if(this.x >= 320 - 32){
+                        		this.dx *= -1;
+                        	}
+                        	//xが0になったら跳ね返りする
+                        	if(this.x <= 0){
+                        		this.dx *= -1;
+                        	}
+                        	
+                        	if(this.keepstatecount<=0){
+                        	this.keepstatecount =32 + Math.floor(Math.random(32));
+                        	this.state = AIM_STATE;
+                        	}
+                        	
+                        }else if(state == AIM_STATE){
+                        
+                        }else if(state == SHOT_STATE){
+                        
+                        }else if(state == "evacuate"){
+                        
                         }
                         
-                        //xが320-32以上になったら跳ね返りする
-                        if(this.x >= 320 - 32){
-                        	this.dx *= -1;
-                        }
-                        //xが0になったら跳ね返りする
-                        if(this.x <= 0){
-                        	this.dx *= -1;
-                        }
-                        
-                        //scaleXが7以上になったらスプライトをremove
-                      	if(this.scaleX >= 3.5){
-                      		game.rootScene.removeChild(this);
-                      	}
-                        
-                      	},
+                      },
+                      
+                      
+                      
                       	//タッチが終了した時の処理
                      	ontouchend: function(){
                         	game.score = game.score + addscore;
@@ -57,6 +78,7 @@ window.onload = function(){
     game = new Game(320, 320);
     game.fps = 16;
     game.score = 0;
+    game.tick = 16 * 30;
 	//画像の読み込み
 	game.preload('gunfighter.png','wilderness.gif','crag.gif','cactus.gif','fcactus.gif','rock.gif','bullet.gif','heart.png');
 	//ロード開始時に呼ばれる
@@ -66,33 +88,27 @@ window.onload = function(){
 		var bg = new Sprite(320,320);
 		bg.image = game.assets['wilderness.gif'];
 		game.rootScene.addChild(bg);
-		
 	
-		//enemyを複数表示させる
-		for (var i = 0; i < 5; i++) {
-            enemyi = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
-        }
-	
-      	// タイム
-        var time_label = new Label();
-        time_label.x = 2;
-        time_label.y = 2;
-        time_label.addEventListener(enchant.Event.ENTER_FRAME, function(){
-            var count = Math.floor(game.frame/game.fps);
-            time = LIMIT_TIME - count;
-            time_label.text = "タイムリミット : " + time;
-            if (time <= 0) { game.end(game.score, 'GameOver'); }
+      	// タイムとスコアを表示
+        var label = new Label('');
+        label.x = 2;
+        label.y = 2;
+        label._element.style.zIndex = 330;
+        label.addEventListener(enchant.Event.ENTER_FRAME, function(){
+            game.tick --;
+            time = Math.floor(game.tick / 16);
+            label.text = "タイムリミット : " + time +  "<BR>スコア：" + game.score;
+            if (time == 0) { game.end (game.score, 'あなたのスコアは : '+ game.score + 'です！'); }
         });
-        game.rootScene.addChild(time_label);
-   
-      	//スコア
-        var score_label = new Label();
-        score_label.x = 2;
-        score_label.y = 12;
-        score_label.addEventListener(enchant.Event.ENTER_FRAME,function(){
-        	score_label.text = "スコア：" + game.score;
-        });
-        game.rootScene.addChild(score_label);
+        game.rootScene.addChild(label);
+        
+
+			
+				//enemyを複数表示させる
+				for (var i = 0; i < 5; i++) {
+					enemyi = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
+        		}
+       
    
 		//ライフを表示
 		var life = new Sprite(16,16);
@@ -101,29 +117,34 @@ window.onload = function(){
 		game.rootScene.addChild(life);	
 		
 		
+		
 		//障害物を表示
 		var obstacle1 = new Sprite(64,64);
 		obstacle1.image = game.assets['crag.gif'];
-		obstacle1.x = 200;
-		obstacle1.y = 100;
+		obstacle1.x = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle1.y = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle1._element.style.zIndex = obstacle1.height + obstacle1.y;
 		game.rootScene.addChild(obstacle1);
 		
 		var obstacle2 = new Sprite(64,64);
 		obstacle2.image = game.assets['rock.gif'];
-		obstacle2.x = 100;
-		obstacle2.y = 150;
+		obstacle2.x = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle2.y = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle2._element.style.zIndex = obstacle2.height + obstacle2.y;
 		game.rootScene.addChild(obstacle2);
-		
+	
 		var obstacle3 = new Sprite(64,64);
 		obstacle3.image = game.assets['cactus.gif'];
-		obstacle3.x = 200;
-		obstacle3.y = 200;
+		obstacle3.x = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle3.y = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle3._element.style.zIndex = obstacle3.height + obstacle3.y;
 		game.rootScene.addChild(obstacle3);
 		
 		var obstacle4 = new Sprite(64,64);
 		obstacle4.image = game.assets['fcactus.gif'];
-		obstacle4.x = 80;
-		obstacle4.y = 80;
+		obstacle4.x = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle4.y = Math.floor(Math.random() * 320 - 64) + 64;
+		obstacle4._element.style.zIndex = obstacle4.height + obstacle4.y;
 		game.rootScene.addChild(obstacle4);
 		
 	};
