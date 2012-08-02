@@ -1,5 +1,5 @@
 enchant();
-// リミット
+
 var LIMIT_TIME = 30;
 var game;
 var addscore = 10;
@@ -109,6 +109,7 @@ var DEATH_STATE = 4;
                       
                       	//タッチが終了した時の処理
                      	ontouchend: function(){
+                     		 game.assets['gun.wav'].play();
                         	game.score = game.score + addscore;
                         	this.state = DEATH_STATE
                       	}
@@ -163,6 +164,10 @@ var DEATH_STATE = 4;
         			}
         			});	
 
+					rand = function(n){
+						return Math.floor(Math.random() * n);
+					}
+					
 window.onload = function(){
     // ゲームクラスを生成
     game = new Game(320, 320);
@@ -170,7 +175,7 @@ window.onload = function(){
     game.score = 0;
     game.tick = 16 * 30;
 	//画像の読み込み
-	game.preload('gunfighter.png','wilderness.gif','crag.gif','cactus.gif','fcactus.gif','rock.gif','bullet.gif','heart.png');
+	game.preload('gunfighter.png','wilderness.gif','crag.gif','cactus.gif','fcactus.gif','rock.gif','bullet.gif','heart.png','gun.wav');
 	//ロード開始時に呼ばれる
 	game.onload = function(){
 	
@@ -193,13 +198,10 @@ window.onload = function(){
         game.rootScene.addChild(label);
         
  
-			//enemyを複数表示させる
-				for (var i = 0; i < 5; i++) {
-					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 52, Math.floor(Math.random() * 280 - 32) + 52); 
-        		}
+	
        
-			enemy.addEventListener(enchant.Event.ENTER_FRAME,function(){
-				if( time % 5 == 0){
+			game.addEventListener(enchant.Event.ENTER_FRAME,function(){
+				if( rand(1000) < 30){
 					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 52, Math.floor(Math.random() * 280 - 32) + 52); 
 				}
 				
