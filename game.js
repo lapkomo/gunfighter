@@ -4,6 +4,9 @@ var LIMIT_TIME = 30;
 var game;
 var addscore = 10;
 var time = 0;
+var right_out = 350;
+var left_out = -32;
+
 
 var MOVE_STATE = 0;
 var AIM_STATE = 1;
@@ -13,7 +16,7 @@ var EVACUATE_STATE = 3;
 
 
 
-		// ここで自作クラスEnemyをつくる
+		// 敵キャラクラス
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
                     { initialize:function(x,y){ //初期化する
                         Sprite.call(this,32,32); //Spriteオブジェクトを初期化
@@ -60,13 +63,13 @@ var EVACUATE_STATE = 3;
                         this.frame = 2;
                         
                         if(this.keepstatecount<=0){
-                        	this.keepstatecount =32 + Math.floor(Math.random(32));
+                        	this.keepstatecount =16;
                         	this.state = SHOT_STATE;
                         }
                         
                         }else if(this.state == SHOT_STATE){
                         
-                        
+                        this.frame = 3;
                         
                         if(this.keepstatecount<=0){
                         	this.keepstatecount =32 + Math.floor(Math.random(32));
@@ -102,6 +105,7 @@ var EVACUATE_STATE = 3;
                       		game.rootScene.removeChild(this);
                       	}
                     });
+                    
                     
                 //障害物1クラス    
 				var Obstacle1 = Class.create(Sprite, // Spriteクラスを継承
@@ -176,22 +180,25 @@ window.onload = function(){
             game.tick --;
             time = Math.floor(game.tick / 16);
             label.text = "タイムリミット : " + time +  "<BR>スコア：" + game.score;
-            if (time == 0) { game.end (game.score, 'あなたのスコアは : '+ game.score + 'です！'); }
+            if (time == 0) { game.end (game.score, 'あなたのスコアは'+ game.score + 'です！'); }
         });
         game.rootScene.addChild(label);
         
+ 
 
-			//game.addEventListener(enchant.Event.ENTER_FRAME,function(){
-				//if(time % 2 == 0){
-					//enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
-				//}
-				
-			//});
-				//enemyを複数表示させる
-				for (var i = 0; i < 5; i++) {
+			game.addEventListener(enchant.Event.ENTER_FRAME,function(){
+				if( time % 5 == 0){
 					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
-        		}
+				}
+				
+			});
+				//enemyを複数表示させる
+				//for (var i = 0; i < 5; i++) {
+					//enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
+        		//}
        
+   
+   
    
 		//ライフを表示
 		var life = new Sprite(16,16);
