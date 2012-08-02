@@ -12,6 +12,7 @@ var MOVE_STATE = 0;
 var AIM_STATE = 1;
 var SHOT_STATE = 2;
 var EVACUATE_STATE = 3;
+var DEATH_STATE = 4;
 
 
 
@@ -93,6 +94,13 @@ var EVACUATE_STATE = 3;
                         		this.state = AIM_STATE;
 							}
                         
+                        }else if(this.state == DEATH_STATE){
+                        	    this.frame = 4;
+                        	    this.tick++;
+                        	    if(this.tick % 16 == 0){
+                        	    	game.rootScene.removeChild(this);
+                        	    }
+                        	    
                         }
                         
                       },
@@ -102,7 +110,7 @@ var EVACUATE_STATE = 3;
                       	//タッチが終了した時の処理
                      	ontouchend: function(){
                         	game.score = game.score + addscore;
-                      		game.rootScene.removeChild(this);
+                        	this.state = DEATH_STATE
                       	}
                     });
                     
@@ -185,18 +193,18 @@ window.onload = function(){
         game.rootScene.addChild(label);
         
  
-
-			game.addEventListener(enchant.Event.ENTER_FRAME,function(){
+			//enemyを複数表示させる
+				for (var i = 0; i < 5; i++) {
+					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 52, Math.floor(Math.random() * 280 - 32) + 52); 
+        		}
+       
+			enemy.addEventListener(enchant.Event.ENTER_FRAME,function(){
 				if( time % 5 == 0){
-					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
+					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 52, Math.floor(Math.random() * 280 - 32) + 52); 
 				}
 				
 			});
-				//enemyを複数表示させる
-				//for (var i = 0; i < 5; i++) {
-					//enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
-        		//}
-       
+				
    
    
    
