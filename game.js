@@ -4,9 +4,7 @@ var LIMIT_TIME = 30;
 var game;
 var addscore = 10;
 var time = 0;
-var right_out = 350;
-var left_out = -32;
-
+var life;
 
 var MOVE_STATE = 0;
 var AIM_STATE = 1;
@@ -16,6 +14,10 @@ var DEATH_STATE = 4;
 
 
 
+					//乱数
+		rand = function(n){
+			return Math.floor(Math.random() * n);
+		}
 
 		// 敵キャラクラス
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
@@ -30,7 +32,7 @@ var DEATH_STATE = 4;
                         this.tick = 0;
                         this.anim  = [0, 1];
                         this.state = MOVE_STATE;
-                        this.keepstatecount = 32 + Math.floor(Math.random(32));
+                        this.keepstatecount = 32 + rand(32);
                         this._element.style.zIndex = this.height + y;
                         game.rootScene.addChild(this);
                       },
@@ -55,7 +57,7 @@ var DEATH_STATE = 4;
                         	}
                         	
                         	if(this.keepstatecount<=0){
-                        	this.keepstatecount =32 + Math.floor(Math.random(32));
+                        	this.keepstatecount =32 + rand(32);
                         	this.state = AIM_STATE;
                         	}
                         	
@@ -71,9 +73,12 @@ var DEATH_STATE = 4;
                         }else if(this.state == SHOT_STATE){
                         
                         this.frame = 3;
-                        
+                        if(this.keepstatecount % 8 ==0 ){
+                			game.life --;
+                			life.width = 16 * game.life;
+						}
                         if(this.keepstatecount<=0){
-                        	this.keepstatecount =32 + Math.floor(Math.random(32));
+                        	this.keepstatecount =32 + rand(32);
                         	this.state = EVACUATE_STATE;
                         }
                         
@@ -90,7 +95,7 @@ var DEATH_STATE = 4;
                       		}
                       		
                         	if(this.keepstatecount<=0){
-                        		this.keepstatecount =32 + Math.floor(Math.random(32));
+                        		this.keepstatecount =32 + rand(32);
                         		this.state = AIM_STATE;
 							}
                         
@@ -163,17 +168,23 @@ var DEATH_STATE = 4;
                         game.rootScene.addChild(this);
         			}
         			});	
-
-					rand = function(n){
-						return Math.floor(Math.random() * n);
-					}
 					
+					function setLifes(){
+ 				   	life = new Sprite((16 * game.life) - 320,16);
+    				life.image = game.assets['heart.png'];
+    				life.set = function(num){
+        			game.life = num;
+        			this.width = 16 * 5;}
+   						game.rootScene.addChild(life);
+					}
+										
 window.onload = function(){
     // ゲームクラスを生成
     game = new Game(320, 320);
     game.fps = 16;
     game.score = 0;
     game.tick = 16 * 30;
+    game.life = 5;
 	//画像の読み込み
 	game.preload('gunfighter.png','wilderness.gif','crag.gif','cactus.gif','fcactus.gif','rock.gif','bullet.gif','heart.png','gun.wav');
 	//ロード開始時に呼ばれる
@@ -183,6 +194,15 @@ window.onload = function(){
 		var bg = new Sprite(320,320);
 		bg.image = game.assets['wilderness.gif'];
 		game.rootScene.addChild(bg);
+	
+		 
+		//ライフ
+		life = new Sprite(16,16);
+		life.image = game.assets['heart.png'];
+		life.width = 16 * game.life;
+		life.x = 320 - (16 * game.life); life.y = 2;
+		game.rootScene.addChild(life);
+	
 	
       	// タイムとスコアを表示
         var label = new Label('');
@@ -194,6 +214,7 @@ window.onload = function(){
             time = Math.floor(game.tick / 16);
             label.text = "タイムリミット : " + time +  "<BR>スコア：" + game.score;
             if (time == 0) { game.end (game.score, 'あなたのスコアは'+ game.score + 'です！'); }
+           	else if(game.life == 0){ game.end (game.score, 'あなたのスコアは'+ game.score + 'です！');}
         });
         game.rootScene.addChild(label);
         
@@ -204,26 +225,19 @@ window.onload = function(){
 				if( rand(1000) < 30){
 					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 52, Math.floor(Math.random() * 280 - 32) + 52); 
 				}
-				
 			});
 				
    
    
-   
-		//ライフを表示
-		var life = new Sprite(16,16);
-		life.image = game.assets['heart.png'];
-		life.x = 300; life.y = 2;
-		game.rootScene.addChild(life);	
+
 		
 		
 		
 		//障害物を表示
-		obstacle1 = new Obstacle1(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
-		obstacle2 = new Obstacle2(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
-		obstacle3 = new Obstacle3(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
-		obstacle4 = new Obstacle4(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
-		
+		obstacle1 = new Obstacle1(Math.floor(Math.random() * 260 - 64) + 64, Math.floor(Math.random() * 260 - 64) + 64); 
+		obstacle2 = new Obstacle2(Math.floor(Math.random() * 260 - 64) + 64, Math.floor(Math.random() * 260 - 64) + 64); 
+		obstacle3 = new Obstacle3(Math.floor(Math.random() * 260 - 64) + 64, Math.floor(Math.random() * 260 - 64) + 64); 
+		obstacle4 = new Obstacle4(Math.floor(Math.random() * 260 - 64) + 64, Math.floor(Math.random() * 260 - 64) + 64); 
 		
 		
 	};
