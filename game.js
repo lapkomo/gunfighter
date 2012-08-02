@@ -11,6 +11,8 @@ var SHOT_STATE = 2;
 var EVACUATE_STATE = 3;
 
 
+
+
 		// ここで自作クラスEnemyをつくる
 		var Enemy = Class.create(Sprite, // Spriteクラスを継承
                     { initialize:function(x,y){ //初期化する
@@ -23,7 +25,7 @@ var EVACUATE_STATE = 3;
                         this.frame = 0;
                         this.tick = 0;
                         this.anim  = [0, 1];
-                        this.state = "move";
+                        this.state = MOVE_STATE;
                         this.keepstatecount = 32 + Math.floor(Math.random(32));
                         this._element.style.zIndex = this.height + y;
                         game.rootScene.addChild(this);
@@ -53,11 +55,40 @@ var EVACUATE_STATE = 3;
                         	this.state = AIM_STATE;
                         	}
                         	
-                        }else if(state == AIM_STATE){
+                        }else if(this.state == AIM_STATE){
                         
-                        }else if(state == SHOT_STATE){
+                        this.frame = 2;
                         
-                        }else if(state == "evacuate"){
+                        if(this.keepstatecount<=0){
+                        	this.keepstatecount =32 + Math.floor(Math.random(32));
+                        	this.state = SHOT_STATE;
+                        }
+                        
+                        }else if(this.state == SHOT_STATE){
+                        
+                        
+                        
+                        if(this.keepstatecount<=0){
+                        	this.keepstatecount =32 + Math.floor(Math.random(32));
+                        	this.state = EVACUATE_STATE;
+                        }
+                        
+                        }else if(this.state == EVACUATE_STATE){
+                        	
+                        	this.tick++;
+                      		this.frame = this.anim [this.tick % 3];
+                      		if(this.tick % 1 == 0){
+                      			this.x = this.x + this.dx;
+                      		}
+                      		
+                      		if(this.x <= 0 || this.x >= 320 ){
+                      			game.rootScene.removeChild(this);
+                      		}
+                      		
+                        	if(this.keepstatecount<=0){
+                        		this.keepstatecount =32 + Math.floor(Math.random(32));
+                        		this.state = AIM_STATE;
+							}
                         
                         }
                         
@@ -72,6 +103,53 @@ var EVACUATE_STATE = 3;
                       	}
                     });
                     
+                //障害物1クラス    
+				var Obstacle1 = Class.create(Sprite, // Spriteクラスを継承
+                    { initialize:function(x,y){ //初期化する
+                        Sprite.call(this,64,64); //Spriteオブジェクトを初期化
+                        this.image = game.assets['crag.gif'];
+                        this.x = x;
+                        this.y = y;
+                        this._element.style.zIndex = this.height + this.y;
+                        game.rootScene.addChild(this);
+        			}
+        			});
+        		
+        		//障害物2クラス
+        		var Obstacle2 = Class.create(Sprite, // Spriteクラスを継承
+                    { initialize:function(x,y){ //初期化する
+                        Sprite.call(this,64,64); //Spriteオブジェクトを初期化
+                        this.image = game.assets['rock.gif'];
+                        this.x = x;
+                        this.y = y;
+                        this._element.style.zIndex = this.height + this.y;
+                        game.rootScene.addChild(this);
+        			}
+        			});
+        			
+        			//障害物3クラス
+        		var Obstacle3 = Class.create(Sprite, // Spriteクラスを継承
+                    { initialize:function(x,y){ //初期化する
+                        Sprite.call(this,64,64); //Spriteオブジェクトを初期化
+                        this.image = game.assets['cactus.gif'];
+                        this.x = x;
+                        this.y = y;
+                        this._element.style.zIndex = this.height + this.y;
+                        game.rootScene.addChild(this);
+        			}
+        			});
+        			
+        			//障害物4クラス
+        		var Obstacle4 = Class.create(Sprite, // Spriteクラスを継承
+                    { initialize:function(x,y){ //初期化する
+                        Sprite.call(this,64,64); //Spriteオブジェクトを初期化
+                        this.image = game.assets['fcactus.gif'];
+                        this.x = x;
+                        this.y = y;
+                        this._element.style.zIndex = this.height + this.y;
+                        game.rootScene.addChild(this);
+        			}
+        			});	
 
 window.onload = function(){
     // ゲームクラスを生成
@@ -103,10 +181,15 @@ window.onload = function(){
         game.rootScene.addChild(label);
         
 
-			
+			//game.addEventListener(enchant.Event.ENTER_FRAME,function(){
+				//if(time % 2 == 0){
+					//enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
+				//}
+				
+			//});
 				//enemyを複数表示させる
 				for (var i = 0; i < 5; i++) {
-					enemyi = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
+					enemy = new Enemy(Math.floor(Math.random() * 280 - 32) + 32, Math.floor(Math.random() * 280 - 32) + 32); 
         		}
        
    
@@ -119,33 +202,12 @@ window.onload = function(){
 		
 		
 		//障害物を表示
-		var obstacle1 = new Sprite(64,64);
-		obstacle1.image = game.assets['crag.gif'];
-		obstacle1.x = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle1.y = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle1._element.style.zIndex = obstacle1.height + obstacle1.y;
-		game.rootScene.addChild(obstacle1);
+		obstacle1 = new Obstacle1(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
+		obstacle2 = new Obstacle2(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
+		obstacle3 = new Obstacle3(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
+		obstacle4 = new Obstacle4(Math.floor(Math.random() * 280 - 64) + 64, Math.floor(Math.random() * 280 - 64) + 64); 
 		
-		var obstacle2 = new Sprite(64,64);
-		obstacle2.image = game.assets['rock.gif'];
-		obstacle2.x = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle2.y = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle2._element.style.zIndex = obstacle2.height + obstacle2.y;
-		game.rootScene.addChild(obstacle2);
-	
-		var obstacle3 = new Sprite(64,64);
-		obstacle3.image = game.assets['cactus.gif'];
-		obstacle3.x = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle3.y = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle3._element.style.zIndex = obstacle3.height + obstacle3.y;
-		game.rootScene.addChild(obstacle3);
 		
-		var obstacle4 = new Sprite(64,64);
-		obstacle4.image = game.assets['fcactus.gif'];
-		obstacle4.x = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle4.y = Math.floor(Math.random() * 320 - 64) + 64;
-		obstacle4._element.style.zIndex = obstacle4.height + obstacle4.y;
-		game.rootScene.addChild(obstacle4);
 		
 	};
 	//ゲーム開始
